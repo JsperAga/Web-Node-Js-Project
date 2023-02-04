@@ -2,3 +2,23 @@ img.not-found-err-img {
     width: 500px;
     height: 500px;
 }
+
+.not-found-home-link{
+    color:white;
+    font-weight: bold;
+    text-decoration: underline;
+
+}
+
+a:hover{
+    color:red;
+    font-weight: bold;
+}
+
+li a:hover {
+    color:#000 !important;
+}
+
+.navbar-default .navbar-brand:hover, .navbar-default .navbar-brand:focus {
+    color:#000 !important;
+}
