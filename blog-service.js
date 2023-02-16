@@ -52,7 +52,7 @@ function getPublishedPosts() {
         if (publishedPosts.length > 0) {
             resolve(publishedPosts);
         } else {
-            reject("No results returned Blog");
+            reject("no results returned");
         }
     })    
 }
@@ -61,11 +61,72 @@ function getPublishedPosts() {
 function getCategories() {
     return new Promise((resolve, reject) => {
         if (categories.length === 0) {
-            reject("No results returned");
+            reject("no results returned");
         } else {
             resolve(categories);
         }
     })
 }
 
-module.exports = { initialize, getAllPosts, getPublishedPosts, getCategories };
+
+
+
+// => Find posts by category
+function getPostsByCategory(category) {
+    return new Promise((resolve, reject) => {
+        const filteredPosts = posts.filter(post => post.category == category);
+
+        if (filteredPosts.length > 0) {
+            resolve(filteredPosts);
+        } else {
+            reject("no results returned");
+        }
+    })
+}
+
+// => Find posts by minDate
+function getPostsByMinDate(minDate) {
+    return new Promise((resolve, reject) => {
+        const filteredPosts = posts.filter(post => new Date(post.postDate) >= new Date(minDate));
+
+        if (filteredPosts.length > 0) {
+            resolve(filteredPosts);
+        } else {
+            reject("no results returned");
+        }
+    })
+}
+
+// => post add post
+function addPost(postData) {
+    return new Promise((resolve, reject) => {
+        if (postData.published === undefined) {
+            postData.published = false;
+        } else {
+            postData.published = true;
+        }
+    
+        // create new Post ID
+        postData.id = posts.length + 1;
+        
+        // Add new post
+        posts.push(postData);
+        resolve(postData);
+    })
+    
+}
+
+function getPostById(id){
+    return new Promise((resolve, reject) => {
+        const filteredPosts = posts.filter(post => post.id == id);
+        const uniqueId = filteredPosts[0];
+
+        if (uniqueId){
+            resolve(filteredPosts);
+        } else {
+            reject("no results returned");
+        }
+    })
+}
+
+module.exports = { initialize, getAllPosts, getPublishedPosts, getCategories, addPost, getPostsByCategory, getPostsByMinDate, getPostById };
