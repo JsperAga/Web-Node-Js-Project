@@ -1,0 +1,33 @@
+<div class="col-md-12">
+<h2>Categories</h2>
+    <hr />
+
+    <div class="table-responsive">
+        <table class="table">
+         <thead>
+            <tr>
+                <th scope="col">Category ID</th>
+                <th scope="col">Category Name</th>                
+            </tr>
+        </thead>
+        {{#if category}}
+        <tbody>
+            {{#each category}}
+                <tr>
+                    <td>{{id}}</td>
+                    <td><a href="/posts?category={{id}}">{{category}}</a></td>
+                    
+                
+                </tr>
+            {{/each}}
+        </tbody>
+        {{else}}
+        <tbody>
+            <tr>
+                <td colspan="5" class="text-center">{{message}}</td>
+            </tr>
+        </tbody>
+        {{/if}}
+        </table>
+    </div>
+</div>

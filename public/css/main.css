@@ -11,14 +11,45 @@ img.not-found-err-img {
 }
 
 a:hover{
-    color:red;
+    color:#0ce3ac;
     font-weight: bold;
 }
 
 li a:hover {
-    color:#000 !important;
+    color:#0ce3ac !important;
 }
 
 .navbar-default .navbar-brand:hover, .navbar-default .navbar-brand:focus {
-    color:#000 !important;
+    color:#0ce3ac !important;
+}
+
+tbody tr{
+  border-top:  1px solid #ddd;
+}
+
+tbody tr  td a {
+    color: white;
+    text-decoration: underline;
+    text-align: center;
+}
+
+tbody tr  td a:hover {
+    color:#fff;
+    text-decoration: underline;
+    text-align: center;
+
+}
+
+tbody tr:hover {
+    background-color:#9a9a9a;
+    color: #0ce3ac;
+}
+
+a.list-group-item, button.list-group-item {
+    color:#fff;
+}
+
+a.list-group-item:hover, button.list-group-item:hover{
+
+    background-color:#9a9a9a
 }
