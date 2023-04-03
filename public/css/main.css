@@ -53,3 +53,66 @@ a.list-group-item:hover, button.list-group-item:hover{
 
     background-color:#9a9a9a
 }
+
+.btn {
+    display: inline-block;
+    margin-bottom: 0;
+    font-weight: normal;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    -ms-touch-action: manipulation;
+    touch-action: manipulation;
+    cursor: pointer;
+    background-image: none;
+    border: 1px solid transparent;
+    padding: 6px 12px !important;
+    font-size: 12px;
+    line-height: 1.42857143;
+    border-radius: 4px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none
+}
+
+.btn a {
+    text-decoration: none;
+}
+
+tbody tr td a {
+    color: white;
+    text-decoration: none;
+    text-align: center;
+}
+
+.btn-danger:hover {
+    color: #ffffff;
+    background-color: #d62c1a;
+    border-color: #cd2a19;
+    display: inline-block;
+    margin-bottom: 0;
+    font-weight: normal;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    -ms-touch-action: manipulation;
+    touch-action: manipulation;
+    cursor: pointer;
+    background-image: none;
+    border: 1px solid transparent;
+    padding: 6px 12px !important;
+    font-size: 12px;
+    line-height: 1.42857143;
+    border-radius: 4px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none
+}
+
+tbody tr td a:hover {
+    color: white;
+    text-decoration: none;
+    text-align: center;
+}

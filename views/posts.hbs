@@ -1,5 +1,5 @@
 <div class="col-md-12">
-<h2>Posts</h2>
+<h2>Posts <a href="/posts/add" class="btn btn-success pull-right">Add Post</a></h2>
     <hr />
 
     <div class="table-responsive">
@@ -19,10 +19,10 @@
                 <tr>
                     <td>{{id}}</td>
                     <td>{{title}}</td>
-                    <td>{{postDate}}</td>
+                    <td>{{formatDate postDate}}</td>
                     <td><a href="/posts?category={{category}}">{{category}}</a></td>
                     <td>{{published}}</td>
-                
+                    <td><a href="posts/delete/{{id}}" class="btn btn-danger">Remove</a></td>
                 </tr>
             {{/each}}
         </tbody>

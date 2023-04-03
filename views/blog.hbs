@@ -3,8 +3,13 @@
 		{{#if data.post}}
         <article>
             <h2>{{data.post.title}}</h2>
-            
-            <img src="{{data.post.featureImage}}" alt="feature Image" style="width:100%" />
+            {{#if data.post.featureImage}}
+             
+           <img src="{{data.post.featureImage}}" alt="feature Image" style="width:100%" />
+            {{else }}
+             <img src="/Images/noImg.jpg" alt="feature Image" style="width:50%" />
+            {{/if}}
+
             <br /><br />
             {{#safeHTML data.post.body}}{{/safeHTML}}
             <br /><br />
@@ -21,7 +26,9 @@
     </section>
     <aside class="col-md-3">
         <br /><br />
-		{{#if data.posts}}
+
+        <!-- Remove this for Sequelize -->
+		{{!-- {{#if data.posts}}
         <h4>Posts</h4>
 
 		<ul class="list-group">
@@ -29,7 +36,15 @@
             <a href="/blog/{{this.id}}?category={{../viewingCategory}}" class="list-group-item">{{this.title}}</a>
             {{/each}}
         </ul>
-		{{/if}}
+		{{/if}} --}}
+        {{#if data.posts}}
+        <h4>Posts</h4>
+            <ul class="list-group">
+                {{#each data.posts}}
+                <a href="/blog/{{id}}?category={{../viewingCategory}}" class="list-group-item">{{title}}</a>
+                {{/each}}
+            </ul>
+        {{/if}}
 		
         {{#if data.categories}}
         <h4>Categories</h4>

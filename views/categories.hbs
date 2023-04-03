@@ -1,5 +1,5 @@
 <div class="col-md-12">
-<h2>Categories</h2>
+<h2>Categories <a href="/categories/add" class="btn btn-success pull-right">Add Category</a></h2>
     <hr />
 
     <div class="table-responsive">
@@ -10,14 +10,13 @@
                 <th scope="col">Category Name</th>                
             </tr>
         </thead>
-        {{#if category}}
+        {{#if categories}}
         <tbody>
-            {{#each category}}
+            {{#each categories}}
                 <tr>
-                    <td>{{id}}</td>
-                    <td><a href="/posts?category={{id}}">{{category}}</a></td>
-                    
-                
+                <td><a href="/posts?category={{id}}">{{id}}</a></td>
+                <td><a href="/posts?category={{id}}">{{category}}</a></td>
+                <td><a href="categories/delete/{{id}}" class="btn btn-danger">Remove</a></td>
                 </tr>
             {{/each}}
         </tbody>
