@@ -1,10 +1,10 @@
 /*********************************************************************************
-* WEB322 – Assignment 05
+* WEB322 – Assignment 06
 * I declare that this assignment is my own work in accordance with Seneca Academic Policy. No part 
 * of this assignment has been copied manually or electronically from any other source 
 * (including 3rd party web sites) or distributed to other students.
 * 
-* Name: _Jasper Aga Camana__ Student ID: _171139215____ Date: April 03, 2023
+* Name: _Jasper Aga Camana__ Student ID: _171139215____ Date: April 13, 2023
 *
 * Cyclic Web App URL: __https://real-plum-sweatpants.cyclic.app_______________
 *
@@ -35,13 +35,39 @@ const stripJs = require("strip-js");
 const bodyParser = require('body-parser');
 const cloudinary = require('cloudinary').v2;
 const path = require("path");
-
+const authData = require("./auth-service.js");
 const pg = require('pg');
 const pghstore = require('pg-hstore');
-
+const clientSessions = require("client-sessions");
 
 // => Set Public folder as Static
 app.use(express.static('public')); 
+
+// Setup client-sessions 
+app.use(clientSessions({
+  cookieName: "session", // this is the object name that will be added to 'req'
+  secret: "web322JasApplication", // this should be a long un-guessable string.
+  duration: 2 * 60 * 1000, // duration of the session in milliseconds (2 minutes)
+  activeDuration: 1000 * 60 // the session will be extended by this many ms each request (1 minute)
+}));
+
+// middleware function to ensure that all of your templates will have access to a "session" object
+app.use(function(req, res, next) {
+  res.locals.session = req.session;
+  next();
+});
+
+// This is a helper middleware function that checks if a user is logged in
+// we can use it in any route that we want to protect against unauthenticated access.
+// A more advanced version of this would include checks for authorization as well after
+// checking if the user is authenticated
+function ensureLogin(req, res, next) {
+  if (!req.session.user) {
+    res.redirect("/login");
+  } else {
+    next();
+  }
+}
 
 cloudinary.config({
   cloud_name: 'drrrcpjvu',
@@ -62,9 +88,18 @@ app.use(function(req,res,next){
 // Define a custom Handlebars helper function to format dates
 const hbs = exphbs.create({
   helpers: {
-      // formatDate: function (date) {
-      //     return date;
-      // },
+       formatDateHistory: function (date) {
+        //console.log(date);
+
+        const datetimeParts = date.split("T");
+        const datesplit = datetimeParts[0]; 
+        const time = datetimeParts[1].slice(0, -5);        
+        let splitDate = datesplit.split("-");
+        let year = splitDate[0];
+        let month = splitDate[1];
+        let day = splitDate[2];
+        return `${year}-${month.padStart(2, '0')}-${day.padStart(2,'0')} ${time}`;
+       },
       formatDate: function(dateObj){
         let year = dateObj.getFullYear();
         let month = (dateObj.getMonth() + 1).toString();
@@ -259,7 +294,7 @@ app.get("/blog/:id", async (req, res) => {
 // });
 
 // ========== Posts Page ==========
-app.get("/posts", function(req,res){
+app.get("/posts", ensureLogin ,function(req,res){
   // if (req.query.category) {
   //   getPostsByCategory(req.query.category)
   //     .then((data) => {
@@ -338,7 +373,7 @@ app.get("/posts", function(req,res){
 });
 
 // ========== Categories Page ==========
-app.get("/categories", (req, res) => {
+app.get("/categories",ensureLogin ,(req, res) => {
   // Remove this for Sequelize
   // getCategories()
   //     .then((data) => {
@@ -362,12 +397,12 @@ app.get("/categories", (req, res) => {
 });
 
 // ========== Add Categories [GET] ==========
-app.get("/categories/add", (req, res) => {
+app.get("/categories/add", ensureLogin ,(req, res) => {
   res.render("addCategory");
 });
 
 // ========== Add Categories [POST] ==========
-app.post("/categories/add", (req, res) => {
+app.post("/categories/add", ensureLogin ,(req, res) => {
   let categoryObject = {};
   // Add it Category before redirecting to /categories
   categoryObject.category = req.body.category;
@@ -387,7 +422,7 @@ app.post("/categories/add", (req, res) => {
 //   res.sendFile(path.join(__dirname, "views", "addPost.html"));
 // });
 
-app.get("/posts/add", (req, res) => {
+app.get("/posts/add", ensureLogin , (req, res) => {
   //res.render("addPost");
   getCategories()
   .then((categories) => {
@@ -484,7 +519,7 @@ app.get("/posts/add", (req, res) => {
 //   }
 // });
 
-app.post("/posts/add", upload.single("featureImage"), (req, res) => {
+app.post("/posts/add",ensureLogin , upload.single("featureImage"), (req, res) => {
   // Configuring cloudinary image uploading
   let streamUpload = (req) => {
     return new Promise((resolve, reject) => {
@@ -577,7 +612,7 @@ app.get("/post/:value", (req, res) => {
 });
 
 // ========== Delete Categories ==========
-app.get("/categories/delete/:id",  (req, res) => {
+app.get("/categories/delete/:id", ensureLogin , (req, res) => {
   deleteCategoryById(req.params.id)
     .then(() => {
       res.redirect("/categories");
@@ -588,7 +623,7 @@ app.get("/categories/delete/:id",  (req, res) => {
 });
 
 // ========== Delete Posts ==========
-app.get("/posts/delete/:id",  (req, res) => {
+app.get("/posts/delete/:id",ensureLogin ,  (req, res) => {
   deletePostById(req.params.id)
     .then(() => {
       res.redirect("/posts");
@@ -598,6 +633,58 @@ app.get("/posts/delete/:id",  (req, res) => {
     });
 });
 
+// Start Assignment 6 //
+
+// ========== Get Login Page ==========
+app.get("/login", (req, res) => {
+  res.render("login");
+})
+
+// ========== Post Login Page ==========
+app.post("/login", (req, res) => {
+  req.body.userAgent = req.get('User-Agent');
+  authData.checkUser(req.body)
+    .then((user) => {
+      req.session.user = {
+        userName: user.userName,
+        email: user.email,
+        loginHistory: user.loginHistory
+      };
+      res.redirect('/posts');
+    })
+    .catch((err) => {
+      res.render('login', {errorMessage: err, userName: req.body.userName});
+    });
+})
+
+// ========== Get Register Page ==========
+app.get("/register", (req, res) => {
+  res.render("register");
+})
+
+// ========== Post Register Page ==========
+app.post("/register", (req, res) => {
+  authData.registerUser(req.body)
+  .then(() => {
+    res.render('register', { successMessage: 'User created' });
+  })
+  .catch((err) => {
+    res.render('register', { errorMessage: err, userName: req.body.userName });
+  });
+})
+
+// ========== Logout ==========
+app.get("/logout", (req, res) => {
+  req.session.reset();
+  res.redirect("/");
+})
+
+// ========== User History ==========
+app.get("/userHistory", ensureLogin, (req, res) => {
+  res.render("userHistory");
+})
+
+// End Assignment 6 //
 
 // ========== HANDLE 404 REQUESTS ==========
 // app.use((req, res) => {
@@ -608,13 +695,22 @@ app.use((req, res) => {
 });
 
 // ========== Setup Server Response ==========
-initialize().then(() => {
-  // The integrated terminal shows "Express http server listening on 8080"
-  app.listen(HTTP_PORT, () => {
-    console.log("Express http server listening on: " + HTTP_PORT);
-  });
-})
+// initialize().then(() => {
+//   // The integrated terminal shows "Express http server listening on 8080"
+//   app.listen(HTTP_PORT, () => {
+//     console.log("Express http server listening on: " + HTTP_PORT);
+//   });
+// })
 
+blogData.initialize()
+  .then(authData.initialize)
+  .then(function(){
+    app.listen(HTTP_PORT, function(){
+      console.log("app listening on: " + HTTP_PORT)
+    });
+  }).catch(function(err){
+    console.log("unable to start server: " + err);
+});
 
 
 
