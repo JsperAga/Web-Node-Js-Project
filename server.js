@@ -129,7 +129,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // no { storage: storage } since we are not using disk storage
 const upload = multer(); 
 
-const HTTP_PORT = process.env.PORT || 8080;
+const HTTP_PORT = process.env.PORT || 8081;
 
 // ========== Home Page  ==========
 app.get("/", (req,res) => {
